@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import random
 import string
 
-URL = "http://127.0.0.1:8000/feedback-1/"
+URL = "https://study-dev.ru/feedback-1/"
 
 def rand_text(n=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))

@@ -8,8 +8,8 @@ import string
 import time
 #import undetected_chromedriver as uc
 
-page = "feedback-3"
-URL = f"http://localhost:8000/{page}"
+page = "feedback-1"
+URL = f"https://study-dev.ru/{page}"
 
 def rand_text(n=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
@@ -69,7 +69,7 @@ def run():
 
 
     chrome_options = Options()
-    #chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--window-size=1200,900")
 
@@ -79,19 +79,19 @@ def run():
     try:
         driver.get(URL)
 
-        time.sleep(20)
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, "form"))
         )
 
-        time.sleep(random.uniform(1.0, 3.0))
+        #time.sleep(random.uniform(1.0, 3.0))
+        time.sleep(random.uniform(0.0, 10.0))
 
         form = driver.find_element(By.TAG_NAME, "form")
         fields = form.find_elements(By.CSS_SELECTOR, "input, textarea, select")
 
         for f in fields:
             fill_field(f)
-            time.sleep(random.uniform(0.2, 0.7))
+            #time.sleep(random.uniform(0.2, 0.7))
 
         if page == "feedback-2":
             try:
@@ -110,7 +110,7 @@ def run():
 
                 print("[OK] Чекбокс reCAPTCHA кликнут")
                 driver.switch_to.default_content()
-                time.sleep(random.uniform(6.9, 10.0))
+                #time.sleep(random.uniform(6.9, 10.0))
 
                 driver.switch_to.frame(driver.find_element(By.CSS_SELECTOR, 'iframe[src*="recaptcha/api2/anchor"]'))
                 is_checked = driver.find_element(By.ID, "recaptcha-anchor").get_attribute("aria-checked") == "true"
@@ -185,7 +185,7 @@ def run():
                 else:
                     print("[WARN] iframe не найден через JS → возможно другой режим или детект")
 
-                time.sleep(random.uniform(5, 10))
+                #time.sleep(random.uniform(5, 10))
 
                 token = driver.execute_script(
                     "return document.querySelector('input[name=\"cf-turnstile-response\"]').value;"
@@ -198,14 +198,14 @@ def run():
             except Exception as e:
                 print(f"[ERROR] Turnstile обработка: {type(e).__name__} - {str(e)}")
                 driver.save_screenshot("turnstile_fail.png")
-
+        #time.sleep(random.uniform(30, 60))
         try:
             submit = WebDriverWait(driver, 8).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "button[type='submit']"))
             )
             
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit)
-            time.sleep(0.4)
+            #time.sleep(0.4)
             
             try:
                 submit.click()
@@ -224,7 +224,7 @@ def run():
             except:
                 print("[FAIL] Принудительный submit не сработал")
 
-        time.sleep(2)
+        #time.sleep(2)
         print("Успешно отправлено. URL:", driver.current_url)
 
     finally:

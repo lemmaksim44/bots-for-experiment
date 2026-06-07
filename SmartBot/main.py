@@ -10,8 +10,10 @@ import string
 import time
 import os
 
-page = "feedback-2"
-URL = f"http://localhost:8000/{page}"
+page = "feedback-3"
+localhost = "http://localhost:8000/"
+site = "https://study-dev.ru/"
+URL = f"{site}{page}"
 
 def rand_text(n=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=n))
@@ -55,7 +57,7 @@ def fill_field(element):
     except Exception as e:
         print(f"[error] {name}: {e}")
 
-def wait_captcha_solved(driver, timeout=300):
+def wait_captcha_solved(driver, timeout=120):
     WebDriverWait(driver, timeout).until(
         lambda d: d.find_element(By.CSS_SELECTOR, ".captcha-solver")
                     .get_attribute("data-state") in ("success", "solved", "done")
@@ -79,20 +81,23 @@ def run():
     try:
         driver.get(URL)
 
-        wait_captcha_solved(driver, timeout=120)
+        try:
+            wait_captcha_solved(driver, timeout=300)
+        except:
+            print('Не решилась')
         
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, "form"))
         )
 
-        time.sleep(random.uniform(1.0, 3.0))
+        #time.sleep(random.uniform(1.0, 3.0))
 
         form = driver.find_element(By.TAG_NAME, "form")
         fields = form.find_elements(By.CSS_SELECTOR, "input, textarea, select")
 
         for f in fields:
             fill_field(f)
-            time.sleep(random.uniform(0.2, 0.7))
+            #time.sleep(random.uniform(0.2, 0.7))
 
         try:
             submit = WebDriverWait(driver, 8).until(
@@ -100,7 +105,7 @@ def run():
             )
             
             driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit)
-            time.sleep(0.4)
+            #time.sleep(0.4)
             
             try:
                 submit.click()
@@ -119,7 +124,7 @@ def run():
             except:
                 print("[FAIL] Принудительный submit не сработал")
 
-        time.sleep(2)
+        #time.sleep(2)
         print("Успешно отправлено. URL:", driver.current_url)
 
     finally:
